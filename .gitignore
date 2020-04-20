@@ -1,0 +1,5 @@
+*.json
+*.wasm
+*.cpp
+*.sym
+*.r1cs
