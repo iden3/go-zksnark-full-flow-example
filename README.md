@@ -11,13 +11,6 @@ zkSNARK full flow example in Go
 ![](go-zksnark-flow.png)
 
 ## Usage
-- compile the circuit and generate trusted setup
 ```
-cd testdata
-./compile-and-trustedsetup.sh
-```
-
-- the rest of the flow
-```
-go test
+./complete-flow.sh
 ```

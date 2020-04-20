@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"testing"
+	"time"
 
 	"github.com/iden3/go-circom-prover-verifier/parsers"
 	"github.com/iden3/go-circom-prover-verifier/prover"
@@ -14,20 +15,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func printT(s string) {
+	fmt.Printf("%s "+s+"\n", time.Now().Format("15:04:05"))
+}
+
 func TestFullFlow(t *testing.T) {
 	// compile circuits & compute trusted setup:
 	// using compile-and-trustedsetup.sh
 
 	// build the testing environment: claims, identities, merkletrees, etc
-	fmt.Println("- Generate testing environment: claims, identities, merkletrees, etc")
-	fmt.Println("- Generate inputs")
+	printT("Generate testing environment: claims, identities, merkletrees, etc")
+	printT("- Generate inputs")
 	inputsJson := IdStateInputs(t)
 	err := ioutil.WriteFile("testdata/inputs.json", []byte(inputsJson), 0644)
-	fmt.Println(inputsJson)
 	require.Nil(t, err)
 
 	// calculate witness
-	fmt.Println("- Calculate witness")
+	printT("- Calculate witness")
 	wasmFilename := "testdata/circuit.wasm"
 	inputsFilename := "testdata/inputs.json"
 
@@ -52,11 +56,9 @@ func TestFullFlow(t *testing.T) {
 	witnessCalculator, err := witnesscalc.NewWitnessCalculator(runtime, module)
 	require.Nil(t, err)
 
-	fmt.Println("inputs", inputs)
 	wit, err := witnessCalculator.CalculateWitness(inputs, false)
 	require.Nil(t, err)
 
-	fmt.Println("witness[:30]", wit[:30])
 	wJSON, err := json.Marshal(witnesscalc.WitnessJSON(wit))
 	require.Nil(t, err)
 	err = ioutil.WriteFile("testdata/witness.json", []byte(wJSON), 0644)
@@ -64,7 +66,7 @@ func TestFullFlow(t *testing.T) {
 
 	// generate zk proof
 	// read ProvingKey & Witness files
-	fmt.Println("- Generate zkProof")
+	printT("- Generate zkProof")
 	provingKeyJson, err := ioutil.ReadFile("testdata/proving_key.json")
 	require.Nil(t, err)
 	witnessJson, err := ioutil.ReadFile("testdata/witness.json")
@@ -97,7 +99,7 @@ func TestFullFlow(t *testing.T) {
 	// read proof & verificationKey & publicSignals
 	proofJson, err := ioutil.ReadFile("testdata/proof.json")
 	require.Nil(t, err)
-	fmt.Println("- Verify zkProof")
+	printT("- Verify zkProof")
 	vkJson, err := ioutil.ReadFile("testdata/verification_key.json")
 	require.Nil(t, err)
 	publicJson, err := ioutil.ReadFile("testdata/public.json")
@@ -114,6 +116,12 @@ func TestFullFlow(t *testing.T) {
 	// verify the proof with the given verificationKey & publicSignals
 	v := verifier.Verify(vk, proof, pubSignals)
 	fmt.Println("verifier.Verify", v)
+
+	// verify but using the stored files
+	vkJson, err = ioutil.ReadFile("testdata/verification_key.json")
+	require.Nil(t, err)
+	vk, err = parsers.ParseVk(vkJson)
+	require.Nil(t, err)
 	v2 := verifier.Verify(vk, proofParsed, public)
 	fmt.Println("verifier.Verify", v2)
 }
