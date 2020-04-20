@@ -18,13 +18,16 @@ func TestFullFlow(t *testing.T) {
 	// compile circuits & compute trusted setup:
 	// using compile-and-trustedsetup.sh
 
-	// build the testing enviorement: claims, identities, merkletrees, etc
+	// build the testing environment: claims, identities, merkletrees, etc
+	fmt.Println("- Generate testing environment: claims, identities, merkletrees, etc")
+	fmt.Println("- Generate inputs")
 	inputsJson := IdStateInputs(t)
 	err := ioutil.WriteFile("testdata/inputs.json", []byte(inputsJson), 0644)
 	fmt.Println(inputsJson)
 	require.Nil(t, err)
 
 	// calculate witness
+	fmt.Println("- Calculate witness")
 	wasmFilename := "testdata/circuit.wasm"
 	inputsFilename := "testdata/inputs.json"
 
@@ -49,17 +52,19 @@ func TestFullFlow(t *testing.T) {
 	witnessCalculator, err := witnesscalc.NewWitnessCalculator(runtime, module)
 	require.Nil(t, err)
 
+	fmt.Println("inputs", inputs)
 	wit, err := witnessCalculator.CalculateWitness(inputs, false)
 	require.Nil(t, err)
 
+	fmt.Println("witness[:30]", wit[:30])
 	wJSON, err := json.Marshal(witnesscalc.WitnessJSON(wit))
 	require.Nil(t, err)
-	fmt.Print(string(wJSON))
 	err = ioutil.WriteFile("testdata/witness.json", []byte(wJSON), 0644)
 	require.Nil(t, err)
 
 	// generate zk proof
 	// read ProvingKey & Witness files
+	fmt.Println("- Generate zkProof")
 	provingKeyJson, err := ioutil.ReadFile("testdata/proving_key.json")
 	require.Nil(t, err)
 	witnessJson, err := ioutil.ReadFile("testdata/witness.json")
@@ -82,23 +87,33 @@ func TestFullFlow(t *testing.T) {
 	require.Nil(t, err)
 	publicStr, err := json.Marshal(parsers.ArrayBigIntToString(pubSignals))
 	require.Nil(t, err)
-	fmt.Println("proof", proofStr)
-	fmt.Println("public", publicStr)
+
+	err = ioutil.WriteFile("testdata/proof.json", proofStr, 0644)
+	require.Nil(t, err)
+	err = ioutil.WriteFile("testdata/public.json", publicStr, 0644)
+	require.Nil(t, err)
 
 	// verify zk proof
 	// read proof & verificationKey & publicSignals
-	// proofJson, _ := ioutil.ReadFile("../testdata/big/proof.json")
-	vkJson, err := ioutil.ReadFile("../testdata/big/verification_key.json")
+	proofJson, err := ioutil.ReadFile("testdata/proof.json")
 	require.Nil(t, err)
-	// publicJson, _ := ioutil.ReadFile("../testdata/big/public.json")
+	fmt.Println("- Verify zkProof")
+	vkJson, err := ioutil.ReadFile("testdata/verification_key.json")
+	require.Nil(t, err)
+	publicJson, err := ioutil.ReadFile("testdata/public.json")
+	require.Nil(t, err)
 
 	// parse proof & verificationKey & publicSignals
-	// public, _ := parsers.ParsePublicSignals(publicJson)
-	// proof, _ := parsers.ParseProof(proofJson)
+	public, err := parsers.ParsePublicSignals(publicJson)
+	require.Nil(t, err)
+	proofParsed, err := parsers.ParseProof(proofJson)
+	require.Nil(t, err)
 	vk, err := parsers.ParseVk(vkJson)
 	require.Nil(t, err)
 
 	// verify the proof with the given verificationKey & publicSignals
 	v := verifier.Verify(vk, proof, pubSignals)
 	fmt.Println("verifier.Verify", v)
+	v2 := verifier.Verify(vk, proofParsed, public)
+	fmt.Println("verifier.Verify", v2)
 }

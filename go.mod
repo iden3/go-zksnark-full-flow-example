@@ -1,8 +1,8 @@
 module zksnark-full-flow-example
 
-replace github.com/iden3/go-circom-prover-verifier => ../../iden3/go-circom-prover-verifier
+replace github.com/iden3/go-circom-prover-verifier => ../go-circom-prover-verifier
 
-replace github.com/iden3/go-circom-witnesscalc => ../../iden3/go-circom-witnesscalc
+replace github.com/iden3/go-circom-witnesscalc => ../go-circom-witnesscalc
 
 go 1.14
 
