@@ -11,7 +11,6 @@ import (
 	"github.com/iden3/go-circom-prover-verifier/prover"
 	"github.com/iden3/go-circom-prover-verifier/verifier"
 	witnesscalc "github.com/iden3/go-circom-witnesscalc"
-	wasm3 "github.com/iden3/go-wasm3"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,34 +30,22 @@ func TestFullFlow(t *testing.T) {
 	require.Nil(t, err)
 
 	// calculate witness
-	printT("- Calculate witness")
+	printT("- Parse witness files")
 	wasmFilename := "testdata/circuit.wasm"
 	inputsFilename := "testdata/inputs.json"
 
-	runtime := wasm3.NewRuntime(&wasm3.Config{
-		Environment: wasm3.NewEnvironment(),
-		StackSize:   64 * 1024,
-	})
-	defer runtime.Destroy()
-
 	wasmBytes, err := ioutil.ReadFile(wasmFilename)
 	require.Nil(t, err)
-	module, err := runtime.ParseModule(wasmBytes)
-	require.Nil(t, err)
-	module, err = runtime.LoadModule(module)
-	require.Nil(t, err)
-
 	inputsBytes, err := ioutil.ReadFile(inputsFilename)
 	require.Nil(t, err)
 	inputs, err := witnesscalc.ParseInputs(inputsBytes)
 	require.Nil(t, err)
 
-	witnessCalculator, err := witnesscalc.NewWitnessCalculator(runtime, module)
+	printT("- Calculate witness")
+	wit, err := ComputeWitness(wasmBytes, inputs)
 	require.Nil(t, err)
 
-	wit, err := witnessCalculator.CalculateWitness(inputs, false)
-	require.Nil(t, err)
-
+	printT("- Write witness output files")
 	wJSON, err := json.Marshal(witnesscalc.WitnessJSON(wit))
 	require.Nil(t, err)
 	err = ioutil.WriteFile("testdata/witness.json", []byte(wJSON), 0644)
@@ -75,7 +62,6 @@ func TestFullFlow(t *testing.T) {
 	// parse Proving Key
 	pk, err := parsers.ParsePk(provingKeyJson)
 	require.Nil(t, err)
-
 	// parse Witness
 	w, err := parsers.ParseWitness(witnessJson)
 	require.Nil(t, err)
