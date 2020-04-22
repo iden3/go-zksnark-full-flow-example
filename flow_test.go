@@ -66,7 +66,7 @@ func TestFullFlow(t *testing.T) {
 
 	// generate zk proof
 	// read ProvingKey & Witness files
-	printT("- Generate zkProof")
+	printT("- Read proving_key.json & witness.json files")
 	provingKeyJson, err := ioutil.ReadFile("testdata/proving_key.json")
 	require.Nil(t, err)
 	witnessJson, err := ioutil.ReadFile("testdata/witness.json")
@@ -81,6 +81,7 @@ func TestFullFlow(t *testing.T) {
 	require.Nil(t, err)
 
 	// generate the proof
+	printT("- Generate zkProof")
 	proof, pubSignals, err := prover.GenerateProof(pk, w)
 	require.Nil(t, err)
 
@@ -99,7 +100,7 @@ func TestFullFlow(t *testing.T) {
 	// read proof & verificationKey & publicSignals
 	proofJson, err := ioutil.ReadFile("testdata/proof.json")
 	require.Nil(t, err)
-	printT("- Verify zkProof")
+	printT("- Read verification_key.json & public.json files")
 	vkJson, err := ioutil.ReadFile("testdata/verification_key.json")
 	require.Nil(t, err)
 	publicJson, err := ioutil.ReadFile("testdata/public.json")
@@ -114,6 +115,7 @@ func TestFullFlow(t *testing.T) {
 	require.Nil(t, err)
 
 	// verify the proof with the given verificationKey & publicSignals
+	printT("- Verify zkProof")
 	v := verifier.Verify(vk, proof, pubSignals)
 	fmt.Println("verifier.Verify", v)
 

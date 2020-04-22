@@ -16,3 +16,10 @@ echo "	($(($(date -u +%s)-$itime))s)"
 echo $(date +"%T") "trusted setup generated"
 
 sed -i 's/null/["0","0","0"]/g' proving_key.json
+
+
+echo $(date +"%T") "snarkjs generateverifier"
+itime="$(date -u +%s)"
+snarkjs generateverifier
+echo "	($(($(date -u +%s)-$itime))s)"
+echo $(date +"%T") "generateverifier generated"

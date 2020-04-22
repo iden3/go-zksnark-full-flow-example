@@ -3,3 +3,4 @@
 *.cpp
 *.sym
 *.r1cs
+*.sol
