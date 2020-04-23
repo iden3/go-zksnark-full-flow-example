@@ -10,7 +10,7 @@ ftime="$(date -u +%s)"
 echo "	Finish compile-and-trustedsetup.sh ($(($(date -u +%s)-$itime))s)"
 cd ..
 
-echo $(date +"%T") "go test"
+echo $(date +"%T") "go test -run TestFullFlow"
 itime="$(date -u +%s)"
-go test
+go test -run TestFullFlow
 echo "	Finish go test ($(($(date -u +%s)-$itime))s)"

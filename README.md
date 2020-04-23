@@ -16,6 +16,12 @@ zkSNARK full flow example in Go
 ```
 ./complete-flow.sh
 ```
+This will for each one of the circuits in the `testdata` directory:
+1. compile the circuit
+2. generate the trusted setup
+3. calculate the witness
+4. generate the zkProof
+5. verify
 
 ### Android:
 1. [Install Gomobile](https://github.com/golang/go/wiki/Mobile), you will need to install Android SDK and NDK.

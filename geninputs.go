@@ -16,6 +16,7 @@ import (
 )
 
 func IdStateInputs() (string, error) {
+	printT("Generate testing environment: claims, identities, merkletrees, etc")
 
 	nLevels := 59 // in circom is 60 lvls
 

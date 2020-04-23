@@ -13,22 +13,32 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type funcInputsGenerator func() (string, error)
+
 func TestFullFlow(t *testing.T) {
-	// compile circuits & compute trusted setup:
-	// using compile-and-trustedsetup.sh
+	// compile circuits & compute trusted setup using
+	// compile-and-trustedsetup.sh
+
+	testFullFlowCircuit(t, "circuit1", IdStateInputs)
+	testFullFlowCircuit(t, "circuit2", func() (string, error) {
+		return `{"in":"1"}`, nil
+	})
+}
+
+func testFullFlowCircuit(t *testing.T, circuitdir string, funcInputs funcInputsGenerator) {
+	fmt.Println("test full flow for circuit:", circuitdir)
 
 	// build the testing environment: claims, identities, merkletrees, etc
-	printT("Generate testing environment: claims, identities, merkletrees, etc")
 	printT("- Generate inputs")
-	inputsJson, err := IdStateInputs()
+	inputsJson, err := funcInputs()
 	require.Nil(t, err)
-	err = ioutil.WriteFile("testdata/inputs.json", []byte(inputsJson), 0644)
+	err = ioutil.WriteFile("testdata/"+circuitdir+"/inputs.json", []byte(inputsJson), 0644)
 	require.Nil(t, err)
 
 	// calculate witness
 	printT("- Parse witness files")
-	wasmFilename := "testdata/circuit.wasm"
-	inputsFilename := "testdata/inputs.json"
+	wasmFilename := "testdata/" + circuitdir + "/circuit.wasm"
+	inputsFilename := "testdata/" + circuitdir + "/inputs.json"
 
 	wasmBytes, err := ioutil.ReadFile(wasmFilename)
 	require.Nil(t, err)
@@ -44,15 +54,15 @@ func TestFullFlow(t *testing.T) {
 	printT("- Write witness output files")
 	wJSON, err := json.Marshal(witnesscalc.WitnessJSON(wit))
 	require.Nil(t, err)
-	err = ioutil.WriteFile("testdata/witness.json", []byte(wJSON), 0644)
+	err = ioutil.WriteFile("testdata/"+circuitdir+"/witness.json", []byte(wJSON), 0644)
 	require.Nil(t, err)
 
 	// generate zk proof
 	// read ProvingKey & Witness files
 	printT("- Read proving_key.json & witness.json files")
-	provingKeyJson, err := ioutil.ReadFile("testdata/proving_key.json")
+	provingKeyJson, err := ioutil.ReadFile("testdata/" + circuitdir + "/proving_key.json")
 	require.Nil(t, err)
-	witnessJson, err := ioutil.ReadFile("testdata/witness.json")
+	witnessJson, err := ioutil.ReadFile("testdata/" + circuitdir + "/witness.json")
 	require.Nil(t, err)
 
 	// parse Proving Key
@@ -73,19 +83,19 @@ func TestFullFlow(t *testing.T) {
 	publicStr, err := json.Marshal(parsers.ArrayBigIntToString(pubSignals))
 	require.Nil(t, err)
 
-	err = ioutil.WriteFile("testdata/proof.json", proofStr, 0644)
+	err = ioutil.WriteFile("testdata/"+circuitdir+"/proof.json", proofStr, 0644)
 	require.Nil(t, err)
-	err = ioutil.WriteFile("testdata/public.json", publicStr, 0644)
+	err = ioutil.WriteFile("testdata/"+circuitdir+"/public.json", publicStr, 0644)
 	require.Nil(t, err)
 
 	// verify zk proof
 	// read proof & verificationKey & publicSignals
-	proofJson, err := ioutil.ReadFile("testdata/proof.json")
+	proofJson, err := ioutil.ReadFile("testdata/" + circuitdir + "/proof.json")
 	require.Nil(t, err)
 	printT("- Read verification_key.json & public.json files")
-	vkJson, err := ioutil.ReadFile("testdata/verification_key.json")
+	vkJson, err := ioutil.ReadFile("testdata/" + circuitdir + "/verification_key.json")
 	require.Nil(t, err)
-	publicJson, err := ioutil.ReadFile("testdata/public.json")
+	publicJson, err := ioutil.ReadFile("testdata/" + circuitdir + "/public.json")
 	require.Nil(t, err)
 
 	// parse proof & verificationKey & publicSignals
@@ -102,7 +112,7 @@ func TestFullFlow(t *testing.T) {
 	fmt.Println("verifier.Verify", v)
 
 	// verify but using the stored files
-	vkJson, err = ioutil.ReadFile("testdata/verification_key.json")
+	vkJson, err = ioutil.ReadFile("testdata/" + circuitdir + "/verification_key.json")
 	require.Nil(t, err)
 	vk, err = parsers.ParseVk(vkJson)
 	require.Nil(t, err)
