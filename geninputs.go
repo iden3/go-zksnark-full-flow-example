@@ -1,11 +1,10 @@
-package main
+package zkflowexample
 
 import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
-	"testing"
 
 	common3 "github.com/iden3/go-iden3-core/common"
 	"github.com/iden3/go-iden3-core/core/claims"
@@ -14,10 +13,9 @@ import (
 	"github.com/iden3/go-iden3-core/merkletree"
 	"github.com/iden3/go-iden3-crypto/babyjub"
 	cryptoUtils "github.com/iden3/go-iden3-crypto/utils"
-	"github.com/stretchr/testify/assert"
 )
 
-func IdStateInputs(t *testing.T) string {
+func IdStateInputs() (string, error) {
 
 	nLevels := 59 // in circom is 60 lvls
 
@@ -33,19 +31,29 @@ func IdStateInputs(t *testing.T) string {
 	claimKOp := claims.NewClaimKeyBabyJub(pk, 1)
 
 	clt, err := merkletree.NewMerkleTree(db.NewMemoryStorage(), nLevels)
-	assert.Nil(t, err)
+	if err != nil {
+		return "", err
+	}
 	rot, err := merkletree.NewMerkleTree(db.NewMemoryStorage(), nLevels)
-	assert.Nil(t, err)
+	if err != nil {
+		return "", err
+	}
 
 	id, err := genesis.CalculateIdGenesisMT(clt, rot, claimKOp, []merkletree.Entrier{})
-	assert.Nil(t, err)
+	if err != nil {
+		return "", err
+	}
 
 	// get claimproof
 	hi, err := claimKOp.Entry().HIndex()
-	assert.Nil(t, err)
+	if err != nil {
+		return "", err
+	}
 	// generate merkle proof
 	proof, err := clt.GenerateProof(hi, nil)
-	assert.Nil(t, err)
+	if err != nil {
+		return "", err
+	}
 	siblings := merkletree.SiblingsFromProof(proof)
 	for i := len(siblings); i < clt.MaxLevels(); i++ { // add the rest of empty levels to the siblings
 		siblings = append(siblings, &merkletree.HashZero)
@@ -56,7 +64,9 @@ func IdStateInputs(t *testing.T) string {
 		siblingsStr = append(siblingsStr, new(big.Int).SetBytes(common3.SwapEndianness(siblings[i].Bytes())).String())
 	}
 	jsonSiblings, err := json.Marshal(siblingsStr)
-	assert.Nil(t, err)
+	if err != nil {
+		return "", err
+	}
 
 	// newIdState
 	newIdState := new(big.Int).SetBytes(common3.SwapEndianness(id.Bytes()))
@@ -70,7 +80,7 @@ func IdStateInputs(t *testing.T) string {
 	out += fmt.Sprintf(`"claimsTreeRoot": "%s",`+"\n", new(big.Int).SetBytes(common3.SwapEndianness(clt.RootKey().Bytes())))
 	out += fmt.Sprintf(`"newIdState": "%s"`+"\n", newIdState) // TMP
 	out += fmt.Sprintf("}")
-	return out
+	return out, nil
 }
 
 func pruneBuffer(buf *[32]byte) *[32]byte {

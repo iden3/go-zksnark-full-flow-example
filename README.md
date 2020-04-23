@@ -11,6 +11,15 @@ zkSNARK full flow example in Go
 ![](go-zksnark-flow.png)
 
 ## Usage
+
+### Computer:
 ```
 ./complete-flow.sh
 ```
+
+### Android:
+1. [Install Gomobile](https://github.com/golang/go/wiki/Mobile), you will need to install Android SDK and NDK.
+2. Bind the Go code to Android: `gomobile bind --target android -o Android/app/libs/zkSNARK-full-flow.aar`
+3. Connect a Android device or open an emulator and run: `cd Android && ./gradlew installDebug` this will compile and install the app.
+4. Open logcat to see whats going on: `adb logcat GoLog:D \*:S -v long`
+5. Launch the application on the device and tap to the "START FLOW" button. You should see the logs on the terminal of previous step.
