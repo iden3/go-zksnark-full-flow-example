@@ -4,3 +4,6 @@
 *.sym
 *.r1cs
 *.sol
+*.aar
+*.jar
+Android/.idea

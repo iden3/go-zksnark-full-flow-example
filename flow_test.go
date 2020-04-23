@@ -1,11 +1,10 @@
-package main
+package zkflowexample
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"testing"
-	"time"
 
 	"github.com/iden3/go-circom-prover-verifier/parsers"
 	"github.com/iden3/go-circom-prover-verifier/prover"
@@ -14,10 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func printT(s string) {
-	fmt.Printf("%s "+s+"\n", time.Now().Format("15:04:05"))
-}
-
 func TestFullFlow(t *testing.T) {
 	// compile circuits & compute trusted setup:
 	// using compile-and-trustedsetup.sh
@@ -25,8 +20,9 @@ func TestFullFlow(t *testing.T) {
 	// build the testing environment: claims, identities, merkletrees, etc
 	printT("Generate testing environment: claims, identities, merkletrees, etc")
 	printT("- Generate inputs")
-	inputsJson := IdStateInputs(t)
-	err := ioutil.WriteFile("testdata/inputs.json", []byte(inputsJson), 0644)
+	inputsJson, err := IdStateInputs()
+	require.Nil(t, err)
+	err = ioutil.WriteFile("testdata/inputs.json", []byte(inputsJson), 0644)
 	require.Nil(t, err)
 
 	// calculate witness
