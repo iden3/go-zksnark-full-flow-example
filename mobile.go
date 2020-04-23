@@ -14,6 +14,24 @@ import (
 type MobileZKFlow struct{}
 
 func (m *MobileZKFlow) Run(storePath string) error {
+	fmt.Println("Mobile full flow for circuit1")
+	err := m.runCircuit(storePath, "http://161.35.72.58:9000/circuit1", IdStateInputs)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("\nMobile full flow for circuit2")
+	err = m.runCircuit(storePath, "http://161.35.72.58:9000/circuit2", func() (string, error) {
+		return `{"in":"1"}`, nil
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs funcInputsGenerator) error {
 	const wasmFilename = "circuit.wasm"
 	const pkFilename = "proving_key.json"
 	const vkFilename = "verification_key.json"
@@ -22,7 +40,7 @@ func (m *MobileZKFlow) Run(storePath string) error {
 	printT("==> Downloading circuit...")
 	if err := downloadFile(
 		storePath+wasmFilename,
-		"http://161.35.72.58:9000/idstate/circuit.wasm",
+		filesServer+"/circuit.wasm",
 	); err != nil {
 		return err
 	}
@@ -30,7 +48,7 @@ func (m *MobileZKFlow) Run(storePath string) error {
 	printT("==> Downloading proving key...")
 	if err := downloadFile(
 		storePath+pkFilename,
-		"http://161.35.72.58:9000/idstate/proving_key.json",
+		filesServer+"/proving_key.json",
 	); err != nil {
 		return err
 	}
@@ -38,15 +56,14 @@ func (m *MobileZKFlow) Run(storePath string) error {
 	printT("==> Downloading verification key...")
 	if err := downloadFile(
 		storePath+vkFilename,
-		"http://161.35.72.58:9000/idstate/verification_key.json",
+		filesServer+"/verification_key.json",
 	); err != nil {
 		return err
 	}
 	printT("Done")
 	fmt.Print("=============\n\n\n")
 
-	printT("Generate testing environment: claims, identities, merkletrees, ...")
-	inputsJson, err := IdStateInputs()
+	inputsJson, err := funcInputs()
 	if err != nil {
 		return err
 	}
