@@ -18,7 +18,7 @@ import (
 func IdStateInputs() (string, error) {
 	printT("Generate testing environment: claims, identities, merkletrees, etc")
 
-	nLevels := 59 // in circom is 60 lvls
+	nLevels := 16 // in circom is 17 lvls
 
 	privKHex := "28156abe7fe2fd433dc9df969286b96666489bac508612d0e16593e944c4f69f"
 	// Create new claim

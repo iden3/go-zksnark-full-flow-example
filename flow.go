@@ -7,6 +7,8 @@ import (
 	"github.com/iden3/go-wasm3"
 )
 
+type funcInputsGenerator func() (string, error)
+
 func ComputeWitness(wasmBytes []byte, inputs map[string]interface{}) ([]*big.Int, error) {
 	runtime := wasm3.NewRuntime(&wasm3.Config{
 		Environment: wasm3.NewEnvironment(),

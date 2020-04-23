@@ -13,8 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type funcInputsGenerator func() (string, error)
-
 func TestFullFlow(t *testing.T) {
 	// compile circuits & compute trusted setup using
 	// compile-and-trustedsetup.sh
