@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"testing"
+	"time"
 
 	"github.com/iden3/go-circom-prover-verifier/parsers"
 	"github.com/iden3/go-circom-prover-verifier/prover"
@@ -72,8 +73,10 @@ func testFullFlowCircuit(t *testing.T, circuitdir string, funcInputs funcInputsG
 
 	// generate the proof
 	printT("- Generate zkProof")
+	beforeT := time.Now()
 	proof, pubSignals, err := prover.GenerateProof(pk, w)
 	require.Nil(t, err)
+	fmt.Println("proof generation time elapsed:", time.Since(beforeT))
 
 	// print proof & publicSignals
 	proofStr, err := parsers.ProofToJson(proof)

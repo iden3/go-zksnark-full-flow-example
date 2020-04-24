@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"github.com/iden3/go-circom-prover-verifier/parsers"
 	"github.com/iden3/go-circom-prover-verifier/prover"
@@ -107,10 +108,12 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 	printT("Done")
 
 	printT("==> Generating proof...")
+	beforeT := time.Now()
 	proof, pubSignals, err := prover.GenerateProof(pk, w)
 	if err != nil {
 		return err
 	}
+	fmt.Println("proof generation time elapsed:", time.Since(beforeT))
 	printT("Done")
 
 	fmt.Println("Proof generated successfuly!")
