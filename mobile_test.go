@@ -1,6 +1,7 @@
 package zkflowexample
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -12,7 +13,8 @@ func TestMobileFullFlow(t *testing.T) {
 	m := MobileZKFlow{}
 	dir, err := ioutil.TempDir("", "TestMobileFullFlow")
 	require.Nil(t, err)
-	err = m.Run(dir)
+	res, err := m.Run(dir)
+	fmt.Println(res)
 	os.RemoveAll(dir)
 	require.Nil(t, err)
 }

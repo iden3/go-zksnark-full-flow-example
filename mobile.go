@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 	"time"
 
 	"github.com/iden3/go-circom-prover-verifier/parsers"
@@ -14,25 +15,25 @@ import (
 
 type MobileZKFlow struct{}
 
-func (m *MobileZKFlow) Run(storePath string) error {
+func (m *MobileZKFlow) Run(storePath string) (string, error) {
 	fmt.Println("Mobile full flow for circuit1")
-	err := m.runCircuit(storePath, "http://161.35.72.58:9000/circuit1", IdStateInputs)
+	res1, err := m.runCircuit(storePath, "http://161.35.72.58:9000/circuit1", IdStateInputs)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	fmt.Println("\nMobile full flow for circuit2")
-	err = m.runCircuit(storePath, "http://161.35.72.58:9000/circuit2", func() (string, error) {
+	res2, err := m.runCircuit(storePath, "http://161.35.72.58:9000/circuit2", func() (string, error) {
 		return `{"in":"1"}`, nil
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return "C1: " + res1 + "\nC2: " + res2, nil
 }
 
-func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs funcInputsGenerator) error {
+func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs funcInputsGenerator) (string, error) {
 	const wasmFilename = "circuit.wasm"
 	const pkFilename = "proving_key.json"
 	const vkFilename = "verification_key.json"
@@ -43,7 +44,7 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 		storePath+wasmFilename,
 		filesServer+"/circuit.wasm",
 	); err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 	printT("==> Downloading proving key...")
@@ -51,7 +52,7 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 		storePath+pkFilename,
 		filesServer+"/proving_key.json",
 	); err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 	printT("==> Downloading verification key...")
@@ -59,14 +60,14 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 		storePath+vkFilename,
 		filesServer+"/verification_key.json",
 	); err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 	fmt.Print("=============\n\n\n")
 
 	inputsJson, err := funcInputs()
 	if err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 
@@ -74,36 +75,36 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 	printT("==> Parsing inputs...")
 	inputs, err := witnesscalc.ParseInputs([]byte(inputsJson))
 	if err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 	printT("==> Calculating witness...")
 	wasmBytes, err := ioutil.ReadFile(storePath + wasmFilename)
 	if err != nil {
-		return err
+		return "", err
 	}
 	wit, err := ComputeWitness(wasmBytes, inputs)
 	if err != nil {
-		return err
+		return "", err
 	}
 	witnessJson, err := json.Marshal(witnesscalc.WitnessJSON(wit))
 	if err != nil {
-		return err
+		return "", err
 	}
 	w, err := parsers.ParseWitness(witnessJson)
 	if err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 
 	printT("==> Loading proving key...")
 	provingKeyJson, err := ioutil.ReadFile(storePath + pkFilename)
 	if err != nil {
-		return err
+		return "", err
 	}
 	pk, err := parsers.ParsePk(provingKeyJson)
 	if err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 
@@ -111,20 +112,21 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 	beforeT := time.Now()
 	proof, pubSignals, err := prover.GenerateProof(pk, w)
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Println("proof generation time elapsed:", time.Since(beforeT))
+	proofGenTime := time.Since(beforeT)
+	fmt.Println("proof generation time elapsed:", proofGenTime)
 	printT("Done")
 
 	fmt.Println("Proof generated successfuly!")
 	proofStr, err := parsers.ProofToJson(proof)
 	if err != nil {
-		return err
+		return "", err
 	}
 	fmt.Println("Proof: ", string(proofStr))
 	publicStr, err := json.Marshal(parsers.ArrayBigIntToString(pubSignals))
 	if err != nil {
-		return err
+		return "", err
 	}
 	fmt.Println("Public inputs: ", string(publicStr))
 	fmt.Print("=============\n\n\n")
@@ -133,11 +135,11 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 	printT("==> Loading verification key...")
 	vkJson, err := ioutil.ReadFile(storePath + vkFilename)
 	if err != nil {
-		return err
+		return "", err
 	}
 	vk, err := parsers.ParseVk(vkJson)
 	if err != nil {
-		return err
+		return "", err
 	}
 	printT("Done")
 
@@ -146,5 +148,6 @@ func (m *MobileZKFlow) runCircuit(storePath, filesServer string, funcInputs func
 	printT("Done")
 
 	fmt.Println("The result of the verification is: ", v)
-	return nil
+	elapsedSec := float64(proofGenTime) / float64(time.Second)
+	return strconv.FormatFloat(elapsedSec, 'f', 6, 64) + "s", nil
 }
