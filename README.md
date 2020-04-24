@@ -25,7 +25,7 @@ This will for each one of the circuits in the `testdata` directory:
 
 ### Android:
 1. [Install Gomobile](https://github.com/golang/go/wiki/Mobile), you will need to install Android SDK and NDK.
-2. Bind the Go code to Android: `gomobile bind --target android -o Android/app/libs/zkSNARK-full-flow.aar`
+2. Bind the Go code to Android: `mkdir -p Android/app/libs && gomobile bind --target android -o Android/app/libs/zkSNARK-full-flow.aar`
 3. Connect a Android device or open an emulator and run: `cd Android && ./gradlew installDebug` this will compile and install the app.
 4. Open logcat to see whats going on: `adb logcat GoLog:D \*:S -v long`
 5. Launch the application on the device and tap to the "START FLOW" button. You should see the logs on the terminal of previous step.
