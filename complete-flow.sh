@@ -12,5 +12,5 @@ cd ..
 
 echo $(date +"%T") "go test -run TestFullFlow"
 itime="$(date -u +%s)"
-go test -run TestFullFlow
+go test -run=TestFlowLocal
 echo "	Finish go test ($(($(date -u +%s)-$itime))s)"

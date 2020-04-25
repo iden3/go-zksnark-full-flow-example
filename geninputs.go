@@ -15,6 +15,10 @@ import (
 	cryptoUtils "github.com/iden3/go-iden3-crypto/utils"
 )
 
+func GenInputs1() (string, error) {
+	return `{"in":"1"}`, nil
+}
+
 func IdStateInputs() (string, error) {
 	printT("Generate testing environment: claims, identities, merkletrees, etc")
 

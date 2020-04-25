@@ -125,6 +125,8 @@ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpO
 github.com/huin/goupnp v0.0.0-20161224104101-679507af18f3/go.mod h1:MZ2ZmwcBpvOoJ22IJsc7va19ZwoheaBk43rKg12SKag=
 github.com/huin/goupnp v1.0.0/go.mod h1:n9v9KO1tAxYH82qOn+UTIFQDmx5n1Zxd/ClZDMX7Bnc=
 github.com/huin/goutil v0.0.0-20170803182201-1ca381bf3150/go.mod h1:PpLOETDnJ0o3iZrZfqZzyLl6l7F3c6L1oWn7OICBi6o=
+github.com/iancoleman/orderedmap v0.0.0-20190318233801-ac98e3ecb4b0 h1:i462o439ZjprVSFSZLZxcsoAe592sZB1rci2Z8j4wdk=
+github.com/iancoleman/orderedmap v0.0.0-20190318233801-ac98e3ecb4b0/go.mod h1:N0Wam8K1arqPXNWjMo21EXnBPOPp36vB07FNRdD2geA=
 github.com/iden3/go-circom-prover-verifier v0.0.0-20200421172235-6256fcc9dbad h1:GS74U1wCfcFddnwBcsQwj9P98eW+whHS/1C8Bi5RV2c=
 github.com/iden3/go-circom-prover-verifier v0.0.0-20200421172235-6256fcc9dbad/go.mod h1:ZGStP/GSsKbIaLEowo7JmqnWgneFAapA4NrZakHcUk4=
 github.com/iden3/go-circom-prover-verifier v0.0.0-20200422154928-37e5995f80c8 h1:zYgfUL9lEhOIHvxCXFVNLFk2Q2dDgD9HuMwcgx1CXIM=
@@ -133,6 +135,8 @@ github.com/iden3/go-circom-prover-verifier v0.0.0-20200424085028-36917850547a h1
 github.com/iden3/go-circom-prover-verifier v0.0.0-20200424085028-36917850547a/go.mod h1:ZGStP/GSsKbIaLEowo7JmqnWgneFAapA4NrZakHcUk4=
 github.com/iden3/go-circom-witnesscalc v0.0.0-20200422084858-35bc2e54a6ad h1:btw9/uWubgGmCxsI+EV+56c8aPDv6wJrfteLYEE/JQI=
 github.com/iden3/go-circom-witnesscalc v0.0.0-20200422084858-35bc2e54a6ad/go.mod h1:z7PErEUI6NMqWQh+SAwQanuPe2G/29nwgCe0q+uZocw=
+github.com/iden3/go-circom-witnesscalc v0.0.0-20200423133957-b10252d77de1 h1:Bj6+crb/GIg0I4uE+RU1/SfkXR5ak2wf4dC7dCQ1bNo=
+github.com/iden3/go-circom-witnesscalc v0.0.0-20200423133957-b10252d77de1/go.mod h1:1A9n27krmHxlEdoqWG7Pi1rCIfvw26Et23HdyMC6b/Q=
 github.com/iden3/go-iden3-core v0.0.8-0.20200417110412-71c75d3b9482 h1:phx5XzP2fACz28dSRTlzNcvUSG7dUS89B6Hv8PqERGk=
 github.com/iden3/go-iden3-core v0.0.8-0.20200417110412-71c75d3b9482/go.mod h1:66F+PbNbgZ5uNL6UySH00yZmbnpuuFnw1MkMyfW6U9c=
 github.com/iden3/go-iden3-crypto v0.0.4/go.mod h1:LLcgB7DLWAUs+8eBSKne+ZHy5z7xtAmlYlEz0M9M8gE=
@@ -265,6 +269,7 @@ golang.org/x/mobile v0.0.0-20200329125638-4c31acba0007 h1:JxsyO7zPDWn1rBZW8FV5RF
 golang.org/x/mobile v0.0.0-20200329125638-4c31acba0007/go.mod h1:skQtrUTUwhdJvXM/2KKJzY8pDgNr9I/FOMqDVRPBUS4=
 golang.org/x/mod v0.1.0/go.mod h1:0QHyrYULN0/3qlju5TqG8bIK38QM8yzMo5ekMj3DlcY=
 golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
+golang.org/x/mod v0.1.1-0.20191209134235-331c550502dd h1:ePuNC7PZ6O5BzgPn9bZayERXBdfZjUYoXEf5BTfDfh8=
 golang.org/x/mod v0.1.1-0.20191209134235-331c550502dd/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
 golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20181011144130-49bb7cea24b1/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
@@ -300,6 +305,7 @@ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtn
 golang.org/x/tools v0.0.0-20200117012304-6edc0a871e69 h1:yBHHx+XZqXJBm6Exke3N7V9gnlsyXxoCPEb1yVenjfk=
 golang.org/x/tools v0.0.0-20200117012304-6edc0a871e69/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898 h1:/atklqdjdhuosWIl6AIbOeHJjicWYPqR9bpxqxYG2pA=
 golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 gopkg.in/alecthomas/kingpin.v2 v2.2.6/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLkstjWtayDeSgw=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
