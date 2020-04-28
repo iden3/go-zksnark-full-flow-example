@@ -16,13 +16,12 @@ class MainActivity : AppCompatActivity() {
         val storePath = this.filesDir.absolutePath + "/"
         val btnShow = findViewById<Button>(R.id.btnShow)
         val txt: TextView = findViewById(R.id.resTxt) as TextView
-        var res = ""
         btnShow?.setOnClickListener {
             txt.text = "Running"
             try {
 	    	var filesServer = "http://161.35.72.58:9000/circuit2"
 		var inputs = "{\"in\":\"1\"}"
-                res = zk.executeflowdownloading(storePath, filesServer, inputs)
+                val res = zk.executeFlowDownloading(storePath, filesServer, inputs)
                 txt.text = res
             } catch (e: Exception) {
                 Toast.makeText(this@MainActivity, "Fail: $e", Toast.LENGTH_LONG).show()
