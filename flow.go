@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"math/big"
 	"strconv"
 	"time"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/iden3/go-circom-prover-verifier/prover"
 	"github.com/iden3/go-circom-prover-verifier/verifier"
 	witnesscalc "github.com/iden3/go-circom-witnesscalc"
-	"github.com/iden3/go-wasm3"
 )
 
 type funcInputsGenerator func() (string, error)
@@ -26,11 +24,6 @@ func ExecuteFlow(path, inputsJson string) (string, error) {
 		return "", err
 	}
 
-	printT("- Parse witness file")
-	wasmBytes, err := ioutil.ReadFile(path + "/circuit.wasm")
-	if err != nil {
-		return "", err
-	}
 	inputsBytes, err := ioutil.ReadFile(path + "/inputs.json")
 	if err != nil {
 		return "", err
@@ -39,8 +32,8 @@ func ExecuteFlow(path, inputsJson string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	printT("- Calculate witness")
-	wit, err := ComputeWitness(wasmBytes, inputs)
+	printT("- Parse witness file + Calculate witness")
+	wit, err := witnesscalc.CalculateWitness(path+"/circuit.wasm", inputs)
 	if err != nil {
 		return "", err
 	}
@@ -132,32 +125,4 @@ func (m *MobileWrapper) ExecuteFlowDownloading(path, filesServer, generatedInput
 	}
 
 	return r, nil
-}
-
-func ComputeWitness(wasmBytes []byte, inputs []witnesscalc.Input) ([]*big.Int, error) {
-	runtime := wasm3.NewRuntime(&wasm3.Config{
-		Environment: wasm3.NewEnvironment(),
-		StackSize:   64 * 1024,
-	})
-	defer runtime.Destroy()
-
-	module, err := runtime.ParseModule(wasmBytes)
-	if err != nil {
-		return nil, err
-	}
-	module, err = runtime.LoadModule(module)
-	if err != nil {
-		return nil, err
-	}
-
-	witnessCalculator, err := witnesscalc.NewWitnessCalculator(runtime, module)
-	if err != nil {
-		return nil, err
-	}
-
-	wit, err := witnessCalculator.CalculateWitness(inputs, false)
-	if err != nil {
-		return nil, err
-	}
-	return wit, nil
 }
