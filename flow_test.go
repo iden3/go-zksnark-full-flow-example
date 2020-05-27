@@ -20,6 +20,12 @@ func TestFlowLocal(t *testing.T) {
 	require.Nil(t, err)
 	_, err = ExecuteFlow("testdata/circuit2", c2inputs)
 	require.Nil(t, err)
+
+	// circuit 3
+	c3inputs, err := Circuit3Inputs()
+	require.Nil(t, err)
+	_, err = ExecuteFlow("testdata/circuit3", c3inputs)
+	require.Nil(t, err)
 }
 
 func TestFlowDownloadingFiles(t *testing.T) {

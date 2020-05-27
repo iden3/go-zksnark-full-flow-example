@@ -24,6 +24,10 @@ func ExecuteFlow(path, inputsJson string) (string, error) {
 		return "", err
 	}
 
+	wasmBytes, err := ioutil.ReadFile(path + "/circuit.wasm")
+	if err != nil {
+		return "", err
+	}
 	inputsBytes, err := ioutil.ReadFile(path + "/inputs.json")
 	if err != nil {
 		return "", err
@@ -33,7 +37,7 @@ func ExecuteFlow(path, inputsJson string) (string, error) {
 		return "", err
 	}
 	printT("- Parse witness file + Calculate witness")
-	wit, err := witnesscalc.CalculateWitness(path+"/circuit.wasm", inputs)
+	wit, err := witnesscalc.CalculateWitnessBinWASM(wasmBytes, inputs)
 	if err != nil {
 		return "", err
 	}

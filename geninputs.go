@@ -12,6 +12,7 @@ import (
 	"github.com/iden3/go-iden3-core/db"
 	"github.com/iden3/go-iden3-core/merkletree"
 	"github.com/iden3/go-iden3-crypto/babyjub"
+	"github.com/iden3/go-iden3-crypto/poseidon"
 	cryptoUtils "github.com/iden3/go-iden3-crypto/utils"
 )
 
@@ -104,4 +105,26 @@ func skToBigInt(k *babyjub.PrivateKey) *big.Int {
 	cryptoUtils.SetBigIntFromLEBytes(s, sBuf32[:])
 	s.Rsh(s, 3)
 	return s
+}
+
+func Circuit3Inputs() (string, error) {
+	a := big.NewInt(1)
+	b := big.NewInt(2)
+	c, err := poseidon.PoseidonHash([poseidon.T]*big.Int{
+		a,
+		b,
+		big.NewInt(0),
+		big.NewInt(0),
+		big.NewInt(0),
+		big.NewInt(0),
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return `{
+		"a":"` + a.String() + `",
+		"b":"` + b.String() + `",
+		"c":"` + c.String() + `"
+	}`, nil
 }
