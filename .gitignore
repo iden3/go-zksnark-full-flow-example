@@ -8,3 +8,4 @@
 *.jar
 Android/.idea
 Android/app/release
+node_modules
